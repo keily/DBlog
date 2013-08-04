@@ -1,0 +1,12 @@
+#Sun Aug 04 22:49:40 CST 2013
+eclipse.preferences.version=1
+encoding//DBlog/forms.py=utf-8
+encoding//DBlog/models.py=utf-8
+encoding//DBlog/urls.py=utf-8
+encoding//DBlog/view.py=utf-8
+encoding//templates/base.html=UTF-8
+encoding//templates/blog/archive.html=UTF-8
+encoding//templates/blog/blog_add.html=UTF-8
+encoding//templates/blog/myblog.html=UTF-8
+encoding//templates/blog_base.html=UTF-8
+encoding/<project>=UTF-8

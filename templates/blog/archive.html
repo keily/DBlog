@@ -1,0 +1,48 @@
+{% extends "blog_base.html" %}
+
+{% block title %} {{ blog.caption }} {% endblock %}
+
+
+{% block article %}
+<div class="content">
+	<div id="article" class="content-main">
+		{% block article_title %}
+		<h2>{{ blog.caption }}</h2>
+		{% endblock %}
+		<p class="muted">
+			<i class="icon-user"></i><small> {{ blog.author }}</small>
+			<i class="icon-time"></i><small> {{ blog.publish_time }}</small>
+		</p>
+		<section>
+			{% load markup %}
+			<div class="blog-content">
+			{% block article_content %}{{ blog.content|markdown:'codehilite'}}{% endblock %}
+			</div>
+		</section>
+        <div class="row-fluid post-info">
+            <div class="span3">
+                <p>
+                <i class="icon-tag"></i>
+                {% for tag in blog.tags.all %}
+                <small class="muted"> {{ tag }}</small>
+                {% endfor %}
+                </p>
+            </div>
+            <!--加载comment模块-->
+            {% load comments %}
+            <div class="span2 offset7">
+                <a href="{% url 'delblog' blog.id %}" title="delete"><i class="icon-trash"></i></a>
+                <a href="{% url 'updateblog' blog.id %}" title="edit"><i class="icon-edit"></i></a>
+                {% get_comment_count for blog as comment_count %}
+                <a href="#cmt" title="comment"><i class=" icon-comment"></i>{{ comment_count }}</a>
+            </div>
+        </div>
+	</div>
+</div>
+
+{% endblock %}
+
+<script type="text/javascript">
+	var spot1=document.getElementById("spot1");
+	//spot1.innerHTML = {{ blog.content }};
+</script>
