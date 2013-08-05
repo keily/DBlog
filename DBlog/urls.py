@@ -27,6 +27,6 @@ urlpatterns = patterns('',
     url(r'^DBlog/del/(?P<id>\d+)/$', 'DBlog.view.blog_delete', name='delblog'),
     url(r'^DBlog/edit/(?P<id>\d+)/$', 'DBlog.view.blog_edit', name='updateblog'),
     url(r'^DBlog/comments/', include('django.contrib.comments.urls')),
-    url(r'^DBlog/(?P<id>\d+)/commentshow/$', 'blog_show_comment', name='showcomment'),
+    url(r'^DBlog/(?P<id>\d+)/commentshow/$', 'DBlog.view.blog_show_comment', name='showcomment'),
     
 )

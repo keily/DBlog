@@ -1,7 +1,37 @@
 {% extends "blog_base.html" %}
+<!--加载comment模块-->
+{% load comments %}
+
 
 {% block title %} {{ blog.caption }} {% endblock %}
 
+{% block script %}
+<script type="text/javascript">
+	var loadComment=function(){
+		$('#comment_form form input.submit-preview').remove();
+	    $('#comment_form form').submit(function() {
+	        $.ajax({
+	            type: "POST",
+	            data: $('#comment_form form').serialize(),
+	            url: "{% comment_form_target %}",
+	            cache: false,
+	            dataType: "html",
+	            success: function(html, textStatus) {
+	                $('#cmt').replaceWith(html);
+	                $('#comment_form form')[0].reset();
+	            },
+	            error: function (XMLHttpRequest, textStatus, errorThrown) {
+	                $('#comment_form form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
+	            }
+	        });
+	        return false;
+	    });
+	}	
+	$(document).ready(function(){
+		loadComment();
+	});
+</script>
+{% endblock %}
 
 {% block article %}
 <div class="content">
@@ -28,8 +58,7 @@
                 {% endfor %}
                 </p>
             </div>
-            <!--加载comment模块-->
-            {% load comments %}
+            
             <div class="span2 offset7">
                 <a href="{% url 'delblog' blog.id %}" title="delete"><i class="icon-trash"></i></a>
                 <a href="{% url 'updateblog' blog.id %}" title="edit"><i class="icon-edit"></i></a>
@@ -39,10 +68,63 @@
         </div>
 	</div>
 </div>
-
 {% endblock %}
 
-<script type="text/javascript">
-	var spot1=document.getElementById("spot1");
-	//spot1.innerHTML = {{ blog.content }};
-</script>
+{% block comments %}
+<div id="cmt">
+    {% get_comment_count for blog as comment_count %}
+        <h4 class="muted comtop">{{ comment_count }} Comments</h4>
+        <hr class="soften">
+    {% get_comment_list for blog as blog_com %}
+    {% for comment in blog_com %}
+        <div class="container-fluid none-padding">
+            <p class="muted"><small>{{ comment.user }}</small><small>{{ comment.submit_date|date:"F,j,Y" }}</small></p>      
+            {{ comment.comment }}
+        </div>
+        <hr class="soften">
+    {% endfor %}
+</div>
+
+<div >     
+    {% get_comment_form for blog as blog_form %}  
+        <div id="comment_form">
+            <h4 class="muted comtop">New Comments</h4>
+            <form class="form-horizontal" action="{% comment_form_target %}" method="post">
+                <fieldset>
+                {% csrf_token %}
+                {{ blog_form.object_pk }}
+                {{ blog_form.content_type }}
+                {{ blog_form.timestamp }}
+                {{ blog_form.site }}
+                {{ blog_form.submit_date }}
+                {{ blog_form.security_hash }}
+                <div class="control-group">
+                    <label class="control-label" for="id_name">name: </label>
+                    <div class="controls">
+                        <input type="text" id="id_name" class="input-xlarge" name="name" placeholder="please enter name" required="required">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="id_email">email: </label>
+                    <div class="controls">
+                        <input class="input-xlarge" id="id_email" type="email" name="email" placeholder="please enter email" required="required">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="id_comment">comment: </label>
+                    <div class="controls">
+                        <textarea class="input-xlarge comment" id="id_comment" name="comment" placeholder="please enter comment" required="required"></textarea>
+                    </div>
+                </div>
+                <p style="display:none;"><label for="id_honeypot">如果你在该字段中输入任何内容，那么你的评论就会被视为垃圾评论。</label> <input type="text" name="honeypot" id="id_honeypot"></p>
+                <div class="form-actions">
+                    <input class="btn btn-info" type="submit" name="submit" value="Post">
+                    {# <input class="btn btn-info" type="submit" name="preview" value="Preview"> #}
+                    <input type='hidden' name='next' value="{% url 'detailblog' blog.id %}"/>
+                    <!--input type='hidden' name='next' value="{% url 'showcomment' blog.id %}"/-->
+                </div>
+                </fieldset>
+            </form> 
+        </div>
+</div>
+{% endblock %}

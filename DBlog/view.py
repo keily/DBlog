@@ -28,7 +28,7 @@ def getBlogById(request,id=''):
         blog=Blog.objects.get(id=id)
     except Blog.DoesNotExist:
         raise Http404
-    return render_to_response('archive.html',locals())
+    return render_to_response('archive.html',locals(), context_instance=RequestContext(request))
 
 def blog_filter(request,id=''):
     tags = Tag.objects.all()
@@ -107,7 +107,7 @@ def blog_edit(request,id=''):
         if tags:
             taginit = ''
             for x in tags:
-                taginit += str(x) + ' '
+                taginit += str(x) + ','
             tag = TagForm(initial={'tag_name': taginit})
         else:
             tag = TagForm()
@@ -115,3 +115,6 @@ def blog_edit(request,id=''):
         {'blog': blog, 'form': form, 'id': id, 'tag': tag},
         context_instance=RequestContext(request))
     
+def blog_show_comment(request, id=''):
+    blog = Blog.objects.get(id=id)
+    return render_to_response('blog_comments_show.html', {"blog": blog})
